@@ -149,3 +149,7 @@ CMakeLists.txt.user*
 
 # Image
 *.bmp
+
+## Other Files
+*.txt
+*.qm
