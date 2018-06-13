@@ -20,7 +20,12 @@
 
 enum specialEffects {
 	NONE = 0,
-	BINARYZATION = 1
+	GRAY = 1,
+	DILATE = 2,
+	ERODE = 3,
+	HISTOGRAM = 4,
+	EDGE_DETECT = 5,
+	WATERSHED = 6
 };
 
 namespace Ui {
@@ -52,7 +57,17 @@ private slots:
 
 	void on_radioButton_None_clicked();
 
-	void on_radioButton_Binaryzation_clicked();
+	void on_radioButton_Gray_clicked(); 
+	
+	void on_radioButton_Dilate_clicked();
+
+	void on_radioButton_Erode_clicked();
+
+	void on_radioButton_Histogram_clicked();
+
+	void on_radioButton_EdgeDetect_clicked();
+
+	void on_radioButton_WaterShed_clicked();
 
 	void on_SUBMENU_OPEN_triggered();
 
@@ -71,8 +86,6 @@ private slots:
 	void on_Button_ResetToStart_clicked();
 
 	void on_Button_ResetToEnd_clicked();
-
-	void histogramEqualiztion(cv::Mat * src, cv::Mat * dst);
 
 	void updateScreen(int poc);
 
@@ -96,6 +109,18 @@ private:
 	QTimeLine mtime;
 	
 	mAbout *myAbout;
+
+	void Gray(cv::Mat * src, cv::Mat * dst);
+
+	void Dilate(cv::Mat * src, cv::Mat * dst);
+
+	void Erode(cv::Mat * src, cv::Mat * dst);
+
+	void histogramEqualiztion(cv::Mat * src, cv::Mat * dst);
+
+	void edgeDetect(cv::Mat * src, cv::Mat * dst);
+
+	void waterShed(cv::Mat * src, cv::Mat * dst);
 
 protected:
 	void wheelEvent(QWheelEvent *event);

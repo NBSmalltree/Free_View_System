@@ -90,6 +90,27 @@ void MainWindow::on_Button_RePlay_clicked()
 	}
 }
 
+void MainWindow::Gray(cv::Mat * src, cv::Mat * dst)
+{
+	cv::Mat grayImage;
+	cv::cvtColor(*src, grayImage, cv::COLOR_BGR2GRAY);
+	cv::cvtColor(grayImage, *dst, cv::COLOR_GRAY2BGR);
+}
+
+void MainWindow::Dilate(cv::Mat * src, cv::Mat * dst)
+{
+	//>getStructuringElement函数返回的是指定形状和尺寸的结构元素
+	cv::Mat element = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(7, 7));
+	cv::dilate(*src, *dst, element);
+}
+
+void MainWindow::Erode(cv::Mat * src, cv::Mat * dst)
+{
+	//>getStructuringElement函数返回的是指定形状和尺寸的结构元素
+	cv::Mat element = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(7, 7));
+	cv::erode(*src, *dst, element);
+}
+
 // Histogram Equalization;
 void MainWindow::histogramEqualiztion(cv::Mat *src, cv::Mat *dst)
 {
@@ -110,6 +131,75 @@ void MainWindow::histogramEqualiztion(cv::Mat *src, cv::Mat *dst)
 	merge(channels, *dst);
 }
 
+void MainWindow::edgeDetect(cv::Mat * src, cv::Mat * dst)
+{
+	cv::Mat edge, grayImage, outImage;
+	cv::cvtColor(*src, grayImage, cv::COLOR_BGR2GRAY);
+
+	//>先使用3*3内核来降噪
+	cv::blur(grayImage, edge, cv::Size(3, 3));
+
+	//>运行canny算子
+	cv::Canny(edge, outImage, 30, 90);
+
+	cv::cvtColor(outImage, *dst, cv::COLOR_GRAY2BGR);
+}
+
+//>描述：生成随机颜色函数;
+cv::Vec3b RandomColor(int value)
+{
+	value = value % 255;  //>生成0~255的随机数  
+	cv::RNG rng;
+	int aa = rng.uniform(0, value);
+	int bb = rng.uniform(0, value);
+	int cc = rng.uniform(0, value);
+	return cv::Vec3b(aa, bb, cc);
+}
+
+void MainWindow::waterShed(cv::Mat * src, cv::Mat * dst)
+{
+	//>灰度化，滤波，Canny边缘检测
+	cv::Mat imageGray;
+	cvtColor(*src, imageGray, cv::COLOR_BGR2GRAY);
+
+	cv::GaussianBlur(imageGray, imageGray, cv::Size(5, 5), 2);
+
+	cv::Canny(imageGray, imageGray, 60, 140);
+
+	//>查找轮廓
+	cv::vector<cv::vector<cv::Point>> contours;
+	cv::vector<cv::Vec4i> hierarchy;
+	cv::findContours(imageGray, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE, cv::Point());
+	cv::Mat imageContours = cv::Mat::zeros(src->size(), CV_8UC1);  //>轮廓
+	cv::Mat marks(src->size(), CV_32S);   //>OpenCV分水岭第二个矩阵参数
+	marks = cv::Scalar::all(0);
+	int index = 0;
+	int compCount = 0;
+	for (; index >= 0; index = hierarchy[index][0], compCount++) {
+		//>对marks进行标记，对不同区域的轮廓进行编号，相当于设置注水点，有多少轮廓，就有多少注水点  
+		cv::drawContours(marks, contours, index, cv::Scalar::all(compCount + 1), 1, 8, hierarchy);
+		cv::drawContours(imageContours, contours, index, cv::Scalar(255), 1, 8, hierarchy);
+	}
+
+	cv::watershed(*src, marks);
+
+	//>对每一个区域进行颜色填充
+	cv::Mat PerspectiveImage = cv::Mat::zeros(src->size(), CV_8UC3);
+	for (int i = 0; i < marks.rows; i++) {
+		for (int j = 0; j < marks.cols; j++) {
+			int index = marks.at<int>(i, j);
+			if (marks.at<int>(i, j) == -1)
+				PerspectiveImage.at<cv::Vec3b>(i, j) = cv::Vec3b(255, 255, 255);
+			else
+				PerspectiveImage.at<cv::Vec3b>(i, j) = RandomColor(index);
+		}
+	}
+
+	//>分割并填充颜色的结果跟原始图像融合
+	cv::Mat wshed;
+	addWeighted(*src, 0.6, PerspectiveImage, 0.4, 0, *dst);
+}
+
 void MainWindow::updateScreen(int poc)
 {
 	// Determine whether or not is BackwardPlay;
@@ -128,8 +218,28 @@ void MainWindow::updateScreen(int poc)
 		cv::Mat dst(bgr);
 		switch (selectEffect)
 		{
-		case BINARYZATION:
+		case GRAY:
+			Gray(&bgr, &dst);
+			dst.copyTo(bgr);
+			break; 
+		case DILATE:
+			Dilate(&bgr, &dst);
+			dst.copyTo(bgr);
+			break;
+		case ERODE:
+			Erode(&bgr, &dst);
+			dst.copyTo(bgr);
+			break;
+		case HISTOGRAM:
 			histogramEqualiztion(&bgr, &dst);
+			dst.copyTo(bgr);
+			break;
+		case EDGE_DETECT:
+			edgeDetect(&bgr, &dst);
+			dst.copyTo(bgr);
+			break;
+		case WATERSHED:
+			waterShed(&bgr, &dst);
 			dst.copyTo(bgr);
 			break;
 		default:
@@ -373,11 +483,56 @@ void MainWindow::on_radioButton_None_clicked()
 	updateScreen(frameNumber);
 }
 
-void MainWindow::on_radioButton_Binaryzation_clicked()
+void MainWindow::on_radioButton_Gray_clicked()
 {
 	if (is_Open == false)
 		return;
 
-	selectEffect = BINARYZATION;
+	selectEffect = GRAY;
+	updateScreen(frameNumber);
+}
+
+void MainWindow::on_radioButton_Dilate_clicked()
+{
+	if (is_Open == false)
+		return;
+
+	selectEffect = DILATE;
+	updateScreen(frameNumber);
+}
+
+void MainWindow::on_radioButton_Erode_clicked()
+{
+	if (is_Open == false)
+		return;
+
+	selectEffect = ERODE;
+	updateScreen(frameNumber);
+}
+
+void MainWindow::on_radioButton_Histogram_clicked()
+{
+	if (is_Open == false)
+		return;
+
+	selectEffect = HISTOGRAM;
+	updateScreen(frameNumber);
+}
+
+void MainWindow::on_radioButton_EdgeDetect_clicked()
+{
+	if (is_Open == false)
+		return;
+
+	selectEffect = EDGE_DETECT;
+	updateScreen(frameNumber);
+}
+
+void MainWindow::on_radioButton_WaterShed_clicked()
+{
+	if (is_Open == false)
+		return;
+
+	selectEffect = WATERSHED;
 	updateScreen(frameNumber);
 }

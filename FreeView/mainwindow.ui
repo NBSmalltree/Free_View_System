@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1060</width>
-    <height>950</height>
+    <width>1068</width>
+    <height>969</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -147,8 +147,15 @@
         <property name="title">
          <string>特效选择</string>
         </property>
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
-         <item>
+        <layout class="QGridLayout" name="gridLayout_2">
+         <item row="1" column="3">
+          <widget class="QRadioButton" name="radioButton_Erode">
+           <property name="text">
+            <string>腐蚀</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
           <widget class="QRadioButton" name="radioButton_None">
            <property name="text">
             <string>无</string>
@@ -158,10 +165,38 @@
            </property>
           </widget>
          </item>
-         <item>
-          <widget class="QRadioButton" name="radioButton_Binaryzation">
+         <item row="1" column="2">
+          <widget class="QRadioButton" name="radioButton_Dilate">
+           <property name="text">
+            <string>膨胀</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QRadioButton" name="radioButton_Gray">
+           <property name="text">
+            <string>灰度</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QRadioButton" name="radioButton_Histogram">
            <property name="text">
             <string>直方图均衡</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="QRadioButton" name="radioButton_EdgeDetect">
+           <property name="text">
+            <string>边缘检测</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="2">
+          <widget class="QRadioButton" name="radioButton_WaterShed">
+           <property name="text">
+            <string>分水岭分割</string>
            </property>
           </widget>
          </item>
@@ -180,7 +215,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1060</width>
+     <width>1068</width>
      <height>23</height>
     </rect>
    </property>
