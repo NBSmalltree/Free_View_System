@@ -3,7 +3,7 @@ This program is about to play any virtual view according to the reference views'
 
   - **Input :** 
     - Multiview YUV Video Sequence(User only have to pick one, the software will automatically recognize others.)
-  - **Output : **
+  - **Output :**
     - Certain View with certain Effect
   - **Function :**
 	- YUV Player
@@ -30,7 +30,7 @@ This program is about to play any virtual view according to the reference views'
 
   - **输入 :** 
     - 多视点YUV视频序列(用户只需输入同一文件夹下的一个视频，其他相同命名格式的文件由软件自动读取)
-  - **输出 : **
+  - **输出 :**
     - 特定视点特定特效的视频流
   - **实现功能 :**
 	- YUV视频播放
@@ -83,4 +83,10 @@ This program is about to play any virtual view according to the reference views'
 ### 分水岭分割
 ![](/doc/images/010.png)
 
+本软件仍处于开发状态，有好的想法欢迎一起完善，联系我(tomruibin@163.com)
 
+**开发环境：**
+
+[**Visual studio 2015 com**](https://www.visualstudio.com/);
+[**QT5.6.3**](https://www.qt.io/qt5-6/)
+[**Opencv2.4.13**](https://opencv.org/releases.html)
