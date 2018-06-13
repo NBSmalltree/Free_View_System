@@ -7,6 +7,7 @@ This program is about to play any virtual view according to the reference views'
     - Certain View with certain Effect
   - **Function :**
 	- YUV Player
+	- View Control
 	- Play Control
 	  - Single Frame Forward
 	  - Single Frame Backward
@@ -34,6 +35,7 @@ This program is about to play any virtual view according to the reference views'
     - 特定视点特定特效的视频流
   - **实现功能 :**
 	- YUV视频播放
+	- 视点切换
 	- 播放控制
 	  - 单帧步进
 	  - 单帧步退
@@ -58,6 +60,10 @@ This program is about to play any virtual view according to the reference views'
 
 文件播放并切换视点后界面
 ![](/doc/images/002.png)
+
+## 视点切换
+此处为后期处理图，展示视点切换效果
+![](/doc/images/011.png)
 
 ## 视频特效
 
